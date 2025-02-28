@@ -1,23 +1,24 @@
 const mongoose = require('mongoose');
 
-const usersModel = mongoose.Schema({
-  userName:{
-    type: String,
-    required: true,
-    minlength: 3,
-  },
-  userEmail:{
-    type: String,
-    required: true,
-    unique: true,
-  },
-  userPassword:{
-    type: String,
-    required: true,
-    minlength: 8,
-    select: false, // hide the password field in the response
-  }
+const userSchema = new mongoose.Schema({
+    userName: {
+        type: String,
+        required: true,
+    },
+    userEmail: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    userPassword: {
+        type: String,
+        required: true,
+    },
+    userImage: {
+        type: String,
+    },
 });
 
-const users = mongoose.model('users', usersModel);
-module.exports = usersModel
+const userModel = mongoose.model('User', userSchema);
+
+module.exports = userModel;

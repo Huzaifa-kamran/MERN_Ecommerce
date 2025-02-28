@@ -19,4 +19,11 @@ const productsSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-})
+    proImage:{
+        type: String,
+        required: true
+    },
+});
+
+const products = mongoose.model('Products', productsSchema);
+module.exports = products;
