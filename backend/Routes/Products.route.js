@@ -3,7 +3,7 @@ const router = express.Router();
 const {ImageLayer} = require('../Middlewares/ImageUpload');
 const { addProduct, getProducts, getProduct, updateProduct, deleteProduct } = require("../Controllers/Products.controller");
 
-const upload = ImageUpload();
+const upload = ImageLayer();
 
 // Add Product Route 
 router.post('/addProduct', upload.single("proImage"), addProduct);
