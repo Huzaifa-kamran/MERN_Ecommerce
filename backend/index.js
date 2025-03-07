@@ -6,6 +6,7 @@ const { connectionDB } = require('./Config/ConnectionDB');
 
 // Routes
 const authRoutes = require('./Routes/Auth.route');
+const categoryRoutes = require('./Routes/Category.route');
 const productRoutes = require('./Routes/Products.route');
 const orderRoutes = require('./Routes/Orders.route');
 
@@ -23,6 +24,8 @@ app.use(
 
 // Use the auth routes
 app.use('/auth', authRoutes);
+// Use the category routes
+app.use('/categories', categoryRoutes);
 // Use the product routes
 app.use('/products', productRoutes);
 // Use the order routes
