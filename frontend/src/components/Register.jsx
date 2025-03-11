@@ -1,12 +1,42 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
 const Register = () => {
-    const [, setfirst] = useState()
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-    }
+    const [formData, setFormData] = useState({
+        userName: '',
+        userEmail: '',
+        userPassword: ''
+    });
+    const [loading, setLoading] = useState(false); // Add a loading state
+    const navigate = useNavigate();
+    //  React toastify function 
+    const handleToast = (message, toastType) => {
+      toastType === "danger" ? toast.error(message) : toast.success(message);
+    };
+
+    // Submission Function 
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true); // Show loading state
+  
+      try {
+        const response = await axios.post("http://localhost:5000/auth/register", formData);
+  
+        if (response.data.error) {
+          handleToast(response.data.error, "danger");
+        } else {
+          handleToast(response.data.message, "success");
+          setFormData({ userName: "", userEmail: "", userPassword: "" });
+          setTimeout(() => navigate("/account"), 2000);
+        }
+      } catch (error) {
+        handleToast(error.response?.data?.error || "Something went wrong!", "danger");
+      } finally {
+        setLoading(false); // Hide loading state
+      }
+    };
+  
   return (
     <section className="account py-80">
       <div className="container container-lg">
@@ -19,8 +49,7 @@ const Register = () => {
                 <div className="mb-24">
                   <label
                     htmlFor="usernameTwo"
-                    className="text-neutral-900 text-lg mb-8 fw-medium"
-                  >
+                    className="text-neutral-900 text-lg mb-8 fw-medium" >
                     Username <span className="text-danger">*</span>{" "}
                   </label>
                   <input
@@ -28,13 +57,13 @@ const Register = () => {
                     className="common-input"
                     id="usernameTwo"
                     placeholder="Write a username"
+                    onChange={(e)=>setFormData({...formData, userName: e.target.value})}
+                    value={formData.userName}
                   />
                 </div>
                 <div className="mb-24">
-                  <label
-                    htmlFor="emailTwo"
-                    className="text-neutral-900 text-lg mb-8 fw-medium"
-                  >
+                  <label htmlFor="emailTwo"
+                    className="text-neutral-900 text-lg mb-8 fw-medium">
                     Email address
                     <span className="text-danger">*</span>{" "}
                   </label>
@@ -43,6 +72,8 @@ const Register = () => {
                     className="common-input"
                     id="emailTwo"
                     placeholder="Enter Email Address"
+                    onChange={(e)=>setFormData({...formData, userEmail: e.target.value})}
+                    value={formData.userEmail}
                   />
                 </div>
                 <div className="mb-24">
@@ -59,7 +90,8 @@ const Register = () => {
                       className="common-input"
                       id="enter-password"
                       placeholder="Enter Password"
-                      defaultValue="password"
+                      onChange={(e)=>setFormData({...formData, userPassword: e.target.value})}
+                      value={formData.userPassword}
                     />
                     <span
                       className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash"
@@ -84,7 +116,7 @@ const Register = () => {
                 </div>
                 <div className="mt-48">
                   <button type="submit" className="btn btn-main py-18 px-40">
-                    Register
+                  {loading ? "Registering..." : "Register"}
                   </button>
                 </div>
                  <Link
@@ -97,6 +129,7 @@ const Register = () => {
           </div>
         </form>
       </div>
+      <ToastContainer/>
     </section>
   );
 };

@@ -1006,34 +1006,10 @@ const HeaderOne = () => {
                             <div className="header-menu d-lg-block d-none">
                                 {/* Nav Menu Start */}
                                 <ul className="nav-menu flex-align ">
-                                    <li className="on-hover-item nav-menu__item has-submenu">
+                                    <li className="on-hover-item nav-menu__item">
                                         <Link to="#" className="nav-menu__link">
                                             Home
                                         </Link>
-                                        <ul className="on-hover-dropdown common-dropdown nav-submenu scroll-sm">
-                                            <li className="common-dropdown__item nav-submenu__item">
-                                                <NavLink
-                                                    to="/"
-                                                    // className={`common-dropdown__link nav-submenu__link hover-bg-neutral-100 `}
-                                                    className={(navData) =>
-                                                        navData.isActive ? "common-dropdown__link nav-submenu__link hover-bg-neutral-100 activePage" : "common-dropdown__link nav-submenu__link hover-bg-neutral-100"
-                                                    }
-                                                >
-                                                    Home One
-                                                </NavLink>
-                                            </li>
-                                            <li className="common-dropdown__item nav-submenu__item">
-                                                <NavLink
-                                                    to="/index-two"
-                                                    className={(navData) =>
-                                                        navData.isActive ? "common-dropdown__link nav-submenu__link hover-bg-neutral-100 activePage" : "common-dropdown__link nav-submenu__link hover-bg-neutral-100"
-                                                    }
-                                                >
-                                                    {" "}
-                                                    Home Two
-                                                </NavLink>
-                                            </li>
-                                        </ul>
                                     </li>
                                     <li className="on-hover-item nav-menu__item has-submenu">
                                         <Link to="#" className="nav-menu__link">

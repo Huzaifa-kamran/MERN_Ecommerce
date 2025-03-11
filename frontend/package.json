@@ -20,6 +20,7 @@
     "react-scroll-to-top": "^3.0.0",
     "react-slick": "^0.30.2",
     "react-slider": "^2.0.6",
+    "react-toastify": "^11.0.5",
     "select2": "^4.1.0-rc.0",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"

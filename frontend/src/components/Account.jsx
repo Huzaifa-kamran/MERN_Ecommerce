@@ -1,11 +1,49 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 const Account = () => {
+    const [formData, setFormData] = useState({
+        usernNme: '',
+        userPassword: '',
+    });
+    const [loading, setLoading] = useState(false);
+
+        const navigate = useNavigate();
+        //  React toastify function 
+        const handleToast = (message, toastType) => {
+          toastType === "danger" ? toast.error(message) : toast.success(message);
+        };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        if (!formData.userEmail ||!formData.userPassword) {
+            handleToast("Please fill all fields", "danger");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.post("http://localhost:5000/auth/login", formData);
+
+            if (response.data.error) {
+                handleToast(response.data.error, "danger");
+            } else {
+                handleToast(response.data.message, "success");
+                localStorage.setItem("token", response.data.token);
+                setFormData({ userEmail: "", userPassword: "" });
+                setTimeout(() => navigate("/"), 2000);
+            }
+        } catch (error) {
+            handleToast(error.response?.data?.error || "Something went wrong!", "danger");
+        }
+    }
     return (
         <section className="account py-80">
             <div className="container container-lg">
-                <form action="#">
+                <form onSubmit={handleSubmit}>
                     <div className="row gy-4">
                         {/* Login Card Start */}
                         <div className="col-xl-6 pe-xl-5">
@@ -14,22 +52,21 @@ const Account = () => {
                                 <div className="mb-24">
                                     <label
                                         htmlFor="username"
-                                        className="text-neutral-900 text-lg mb-8 fw-medium"
-                                    >
-                                        Username or email address <span className="text-danger">*</span>{" "}
+                                        className="text-neutral-900 text-lg mb-8 fw-medium">Email address <span className="text-danger">*</span>{" "}
                                     </label>
                                     <input
                                         type="text"
                                         className="common-input"
                                         id="username"
                                         placeholder="First Name"
+                                        onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
+                                        value={formData.userEmail}
                                     />
                                 </div>
                                 <div className="mb-24">
                                     <label
                                         htmlFor="password"
-                                        className="text-neutral-900 text-lg mb-8 fw-medium"
-                                    >
+                                        className="text-neutral-900 text-lg mb-8 fw-medium">
                                         Password
                                     </label>
                                     <div className="position-relative">
@@ -38,7 +75,8 @@ const Account = () => {
                                             className="common-input"
                                             id="password"
                                             placeholder="Enter Password"
-                                            defaultValue="password"
+                                            onChange={(e) => setFormData({ ...formData, userPassword: e.target.value })}
+                                            value={formData.userPassword}
                                         />
                                         <span
                                             className="toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ph ph-eye-slash"
@@ -57,7 +95,7 @@ const Account = () => {
                                 <div className="mb-24 mt-48">
                                     <div className="flex-align gap-48 flex-wrap">
                                         <button type="submit" className="btn btn-main py-18 px-40">
-                                            Log in
+                                            {loading ? 'Loading...' : 'Login'}
                                         </button>
                                         <div className="form-check common-check">
                                             <input
@@ -90,6 +128,7 @@ const Account = () => {
                     </div>
                 </form>
             </div>
+            <ToastContainer />
         </section>
 
     )
