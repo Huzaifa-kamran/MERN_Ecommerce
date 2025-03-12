@@ -8,6 +8,10 @@ const categoriesModel = mongoose.Schema({
     catDescription: {
         type: String,
         required: true
+    },
+    catImage: {
+        type: String,
+        required: true
     }
 });
 const Categories = mongoose.model('Categories', categoriesModel);

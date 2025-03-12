@@ -15,6 +15,14 @@ const productsSchema = mongoose.Schema({
         ref: 'Categories',
         required: true
     },
+    proQuantity:{
+        type: Number,
+        required: true
+    },
+    purchasingPrice:{
+        type: Number,
+        required: true
+    },
     proPrice:{
         type: Number,
         required: true

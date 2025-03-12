@@ -4,9 +4,9 @@ const products = require("../Models/Products.model");
 // @API      http://localhost:5000/product/addProduct
 const addProduct = async (req, res) => {
     try {
-        const { proName, proDescription, proCategory, proPrice} = req.body;
+        const { proName, proDescription, proCategory,proQuantity,purchasingPrice, proPrice} = req.body;
 
-        if (!proName || !proDescription || !proCategory || !proPrice || !proImage) {
+        if (!proName || !proDescription || !proCategory || !proQuantity || !purchasingPrice || !proPrice || !proImage) {
             return res.status(400).json({ message: 'Please provide all product details.' });
         }
 
@@ -19,7 +19,7 @@ const addProduct = async (req, res) => {
         return res.status(400).send({"error":"Product Image must be provided."});
         }
         const proImage = req.file.path;
-        const newProduct = await products.create({ proName, proDescription, proCategory, proPrice, proImage });
+        const newProduct = await products.create({ proName, proDescription, proCategory,proQuantity,purchasingPrice, proPrice, proImage });
        return res.status(201).json({ message: 'Product added successfully.', product: newProduct });
     } catch (error) {
         return res.status(500).json({ message: 'Failed to add product.', error: error.message });
@@ -30,7 +30,9 @@ const addProduct = async (req, res) => {
 // @API      http://localhost:5000/product/getProducts
 const getProducts = async (req, res) => {
     try {
-        const allProducts = await products.find();
+        const allProducts = await products.find().populate({
+            path:"proCategory"
+        });
         return res.status(200).json(allProducts);
     } catch (error) {
         return res.status(500).json({ message: 'Failed to fetch products.', error: error.message });
@@ -54,9 +56,9 @@ const getProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { proName, proDescription, proCategory, proPrice } = req.body;
+        const { proName, proDescription, proCategory,proQuantity,purchasingPrice, proPrice } = req.body;
         const proImage = req.file ? req.file.path : null;
-        const updatedProduct = await products.findByIdAndUpdate(id, { proName, proDescription, proCategory, proPrice, proImage }, { new: true });
+        const updatedProduct = await products.findByIdAndUpdate(id, { proName, proDescription, proCategory,proQuantity,purchasingPrice, proPrice, proImage }, { new: true });
         return updatedProduct ? res.json({ message: 'Product updated successfully', product: updatedProduct }) : res.status(404).json({ error: 'Failed to update product' });
     } catch (error) {
         return res.status(404).json({ error: error.message });

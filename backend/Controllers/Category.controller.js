@@ -1,7 +1,7 @@
 const Categories = require('../Models/Categories.model')
 
 // @Method   POST 
-// @API      http://localhost:5000/addCategory
+// @API      http://localhost:5000/categories/addCategory
 const addCategory = async (req, res) => {
     try {
         const { catName, catDescription } = req.body;
@@ -9,13 +9,18 @@ const addCategory = async (req, res) => {
         if (!catName || !catDescription) {
             return res.status(400).json({ message: 'Please provide both category name and description.' });
         }
-
+         
+        console.log(!req.file);
+        if(!req.file){
+        return res.status(400).send({"error":"Category Image must be provided."});
+        }
+        const catImage = req.file.path;
         const checkCategory = await Categories.findOne({ catName });
         if (checkCategory) {
             return res.status(400).json({ message: 'Category already exists.' });
         }
-
-        const newCategory = await Categories.create({ catName, catDescription });
+       
+        const newCategory = await Categories.create({ catName, catDescription,catName });
         res.status(201).json({ message: 'Category added successfully.', category: newCategory });
     } catch (error) {
         res.status(500).json({ message: 'Failed to add category.', error: error.message });
@@ -23,7 +28,7 @@ const addCategory = async (req, res) => {
 };
 
 // @Method   GET
-// @API      http://localhost:5000/getCategories
+// @API      http://localhost:5000/categories/getCategories
 const getCategories = async (req, res) => {
     try {
         const categories = await Categories.find();
@@ -34,7 +39,7 @@ const getCategories = async (req, res) => {
 };
 
 // @Method   GET
-// @API      http://localhost:5000/getCategory/:id
+// @API      http://localhost:5000/categories/getCategory/:id
 const getCategoryById = async (req, res) => {
     try {
         const category = await Categories.findById(req.params.id);
@@ -48,13 +53,14 @@ const getCategoryById = async (req, res) => {
 };
 
 // @Method   PUT
-// @API      http://localhost:5000/updateCategory/:id
+// @API      http://localhost:5000/categories/updateCategory/:id
 const updateCategory = async (req, res) => {
     try {
         const { catName, catDescription } = req.body;
+        const catImage = req.file ? req.file.path : null;
         const updatedCategory = await Categories.findByIdAndUpdate(
             req.params.id,
-            { catName, catDescription },
+            { catName, catDescription,catImage },
             { new: true }
         );
         if (!updatedCategory) {
@@ -67,7 +73,7 @@ const updateCategory = async (req, res) => {
 };
 
 // @Method   DELETE
-// @API      http://localhost:5000/deleteCategory/:id
+// @API      http://localhost:5000/categories/deleteCategory/:id
 const deleteCategory = async (req, res) => {
     try {
         const deletedCategory = await Categories.findByIdAndDelete(req.params.id);

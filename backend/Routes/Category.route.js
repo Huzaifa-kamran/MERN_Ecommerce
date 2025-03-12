@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const {ImageLayer} = require('../Middlewares/ImageUpload');
 const { addCategory, getCategories, getCategoryById, updateCategory, deleteCategory }=
     require('../Controllers/Category.controller');
 
-
+    const upload = ImageLayer();
 //  Add category route 
-router.post('/addCategory', addCategory);
+router.post('/addCategory', upload.single("catImage"),addCategory);
 
 // Get all categories route
 router.get('/getCategories', getCategories);
@@ -14,7 +15,7 @@ router.get('/getCategories', getCategories);
 router.get('/getCategory/:id', getCategoryById);
 
 // Update category route
-router.put('/updateCategory/:id', updateCategory);
+router.put('/updateCategory/:id',upload.single("catImage"), updateCategory);
 
 // Delete category route
 router.delete('/deleteCategory/:id', deleteCategory);
