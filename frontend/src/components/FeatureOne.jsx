@@ -10,6 +10,7 @@ const FeatureOne = () => {
             const fetchData = async () => {
                 const categoriesList = await axios.get('http://localhost:5000/categories/getCategories')
                 setCategories(categoriesList.data)
+                console.log("cat"+categoriesList.data)
             };
             fetchData();
         }, []);
@@ -128,7 +129,7 @@ const FeatureOne = () => {
                                 return  <div key={category._id} className="feature-item text-center">
                                 <div className="feature-item__thumb rounded-circle">
                                     <Link to="/shop" className="w-100 h-100 flex-center">
-                                        <img src="assets/images/thumbs/feature-img1.png" alt="" />
+                                        <img src={category.catImage} alt="" />
                                     </Link>
                                 </div>
                                 <div className="feature-item__content mt-16">

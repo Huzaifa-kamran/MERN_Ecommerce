@@ -55,7 +55,7 @@ const ProductListOne = () => {
                                        <i className="ph-fill ph-storefront" />
                                    </span>
                                    <span className="text-gray-500 text-xs">
-                                       By Lucky Supermarket
+                                       By {product.proCategory.catName}
                                    </span>
                                </div>
                                <div className="mt-12">

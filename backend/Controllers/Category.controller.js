@@ -1,4 +1,5 @@
-const Categories = require('../Models/Categories.model')
+const Categories = require('../Models/Categories.model');
+const products = require('../Models/Products.model');
 
 // @Method   POST 
 // @API      http://localhost:5000/categories/addCategory
@@ -32,7 +33,30 @@ const addCategory = async (req, res) => {
 const getCategories = async (req, res) => {
     try {
         const categories = await Categories.find();
-        res.status(200).json(categories);
+        if (!categories.length) {
+            return res.status(404).json({ message: 'No categories found.' });
+        }
+
+        const categoriesWithProductCount = await Categories.aggregate([
+            {
+                $lookup: {
+                    from: 'Products',
+                    localField: '_id',
+                    foreignField: 'proCategory',
+                    as: 'products',
+                },
+            },
+            {
+                $project: {
+                    catName: 1,
+                    catDescription:1, // Include other fields you need
+                    productCount: { $size: '$products' }, // Count the number of products
+                },
+            },
+        ]);
+
+        // console.log(categoriesWithProductCount);
+        res.status(200).json(categoriesWithProductCount);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch categories.', error: error.message });
     }
