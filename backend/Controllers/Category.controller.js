@@ -40,7 +40,7 @@ const getCategories = async (req, res) => {
         const categoriesWithProductCount = await Categories.aggregate([
             {
                 $lookup: {
-                    from: 'Products',
+                    from: 'products', // Ensure this matches the actual collection name
                     localField: '_id',
                     foreignField: 'proCategory',
                     as: 'products',
@@ -49,13 +49,12 @@ const getCategories = async (req, res) => {
             {
                 $project: {
                     catName: 1,
-                    catDescription:1, // Include other fields you need
+                    catDescription: 1, // Include other fields you need
                     productCount: { $size: '$products' }, // Count the number of products
                 },
             },
         ]);
 
-        // console.log(categoriesWithProductCount);
         res.status(200).json(categoriesWithProductCount);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch categories.', error: error.message });

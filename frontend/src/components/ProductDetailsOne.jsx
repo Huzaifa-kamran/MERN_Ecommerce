@@ -1,41 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import { getCountdown } from '../helper/Countdown';
+import axios from 'axios';
 
 const ProductDetailsOne = () => {
     const [timeLeft, setTimeLeft] = useState(getCountdown());
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimeLeft(getCountdown());
-        }, 1000);
+    const {id} = useParams();
+    
+    // fetch product details
+    const [product, setProduct] = useState(null);
 
-        return () => clearInterval(interval);
-    }, []);
-    const productImages = [
-        "assets/images/thumbs/product-details-thumb1.png",
-        "assets/images/thumbs/product-details-thumb2.png",
-        "assets/images/thumbs/product-details-thumb3.png",
-        "assets/images/thumbs/product-details-thumb2.png",
-    ];
+    const fetchProduct = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/products/getProduct/${id}`);
+            setProduct(response.data); // This updates state asynchronously
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    
+    // Fetch product when `id` changes
+    useEffect(() => {
+        fetchProduct(); 
+    }, [id]);
+    
+    // Log product when it updates
+    useEffect(() => {
+        if (product) console.log(product); 
+    }, [product]); // This runs after `product` updates
 
     // increment & decrement
     const [quantity, setQuantity] = useState(1);
     const incrementQuantity = () => setQuantity(quantity + 1);
     const decrementQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : quantity);
 
-
-    const [mainImage, setMainImage] = useState(productImages[0]);
-
-    const settingsThumbs = {
-        dots: false,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        focusOnSelect: true,
-    };
     return (
         <section className="product-details py-80">
             <div className="container container-lg">
@@ -47,29 +47,15 @@ const ProductDetailsOne = () => {
                                     <div className="product-details__thumb-slider border border-gray-100 rounded-16">
                                         <div className="">
                                             <div className="product-details__thumb flex-center h-100">
-                                                <img src={mainImage} alt="Main Product" />
+                                                <img src={product?.proImage || ""} alt={product?.proName || ""} />
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mt-24">
-                                        <div className="product-details__images-slider">
-                                            <Slider {...settingsThumbs}>
-                                                {productImages.map((image, index) => (
-                                                    <div className="center max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8" key={index} onClick={() => setMainImage(image)}>
-                                                        <img className='thum' src={image} alt={`Thumbnail ${index}`} />
-                                                    </div>
-                                                ))}
-                                            </Slider>
-
-
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-xl-6">
                                 <div className="product-details__content">
-                                    <h5 className="mb-12">Lay's Potato Chips Onion Flavored</h5>
+                                    <h5 className="mb-12">{product?.proName || ""}</h5>
                                     <div className="flex-align flex-wrap gap-12">
                                         <div className="flex-align gap-12 flex-wrap">
                                             <div className="flex-align gap-8">
@@ -104,13 +90,11 @@ const ProductDetailsOne = () => {
                                     </div>
                                     <span className="mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block" />
                                     <p className="text-gray-700">
-                                        Vivamus adipiscing nisl ut dolor dignissim semper. Nulla luctus
-                                        malesuada tincidunt. Class aptent taciti sociosqu ad litora
-                                        torquent
+                                        {product?.proDescription || ""}
                                     </p>
                                     <div className="mt-32 flex-align flex-wrap gap-32">
                                         <div className="flex-align gap-8">
-                                            <h4 className="mb-0">$25.00</h4>
+                                            <h4 className="mb-0">${product?.proPrice || 0}</h4>
                                             <span className="text-md text-gray-500">$38.00</span>
                                         </div>
                                         <Link to="#" className="btn btn-main rounded-pill">

@@ -10,7 +10,7 @@ const FeatureOne = () => {
             const fetchData = async () => {
                 const categoriesList = await axios.get('http://localhost:5000/categories/getCategories')
                 setCategories(categoriesList.data)
-                console.log("cat"+categoriesList.data)
+                console.log(categoriesList)
             };
             fetchData();
         }, []);
@@ -138,7 +138,7 @@ const FeatureOne = () => {
                                            { category.catName}
                                         </Link>
                                     </h6>
-                                    <span className="text-sm text-gray-400">125+ Products</span>
+                                    <span className="text-sm text-gray-400">{category.productCount} Products</span>
                                 </div>
                             </div>
                            })}

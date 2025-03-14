@@ -27,10 +27,10 @@ const ProductListOne = () => {
                                Add <i className="ph ph-shopping-cart" />
                            </Link>
                            <Link
-                               to="/product-details"
+                               to={`/product-details/${product._id}`}
                                className="product-card__thumb flex-center"
                            >
-                               <img src="assets/images/thumbs/product-img1.png" alt="" />
+                               <img src={product.proImage} alt={product.proName} />
                            </Link>
                            <div className="product-card__content mt-12">
                                <div className="product-card__price mb-16">
