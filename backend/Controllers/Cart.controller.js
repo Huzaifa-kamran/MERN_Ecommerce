@@ -1,6 +1,6 @@
 const cart = require('../Models/Cart.model');
 const product = require('../Models/Products.model');
-const user = require('../Models/User.model');
+const User = require('../Models/Users.model'); // Ensure this path is correct
 
 // @Method   POST
 // @API      http://localhost:5000/cart/addToCart
@@ -27,10 +27,12 @@ const addToCart = async (req, res) => {
 };
 
 // @Method   GET
-// @API      http://localhost:5000/cart/getCart
+// @API      http://localhost:5000/cart/getCart/:userId
 const getCart = async (req, res) => {
+    console.log("request hit");
     try {
-        const { userId } = req.body;
+        const userId = req.params.userId;
+        console.log("userId"+userId);
         const checkCart = await cart.findOne({ userId: userId }).populate('items.item');
         if (!checkCart) {
             return res.status(404).json({ message: 'Cart is empty.' });

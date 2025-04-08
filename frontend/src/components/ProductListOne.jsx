@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import {jwtDecode} from "jwt-decode";
 
 const ProductListOne = () => {
-    const [products, setProducts] = useState([])
+    const [products, setProducts] = useState([]);
+    const [isInCart, setIsInCart] = useState(false);
    useEffect(() => {
         const fetchData = async () => {
             const productList = await axios.get('http://localhost:5000/products/getProducts')
@@ -11,7 +13,57 @@ const ProductListOne = () => {
             setProducts(productList.data)
         };
         fetchData();
+
+        const cartItems =()=>{
+            const userId = getDecodedToken();
+            console.log(userId);
+            if (!userId) return null;
+            return axios.get(`http://localhost:5000/cart/getCart?userId=${userId.id}`)
+            .then(response=>{
+                setIsInCart(response.data.some(item=>item.itemId===item))
+                console.log("cart"+response.data.some(item=>item.itemId===item))
+            })
+            .catch(error=>console.error(error))   
+        }
+        cartItems();
     }, []);
+
+    const getDecodedToken = () => {
+        const token = localStorage.getItem("token");
+        if (!token) return null;
+        try {
+          return jwtDecode(token);
+        } catch (error) {
+          console.error("Invalid token:", error);
+          return null;
+        }
+      };
+      
+    const handleAddToCart = async (productId) => {
+        try {
+            // Assuming you have a userId in your application
+            const userId = getDecodedToken();
+            console.log(
+                "Adding product to cart for user: ", userId.id, " with product id: ", productId, "..."
+            )
+            if (!userId) {
+                alert('Please login to add products to cart!')
+                return
+            }
+            // Send a request to add the product to the cart
+            // You might need to send the userId as well
+            await axios.post('http://localhost:5000/cart/addToCart', 
+                {item:productId, quantity: 1, userId: userId.id},
+            )
+            alert('Product added to cart!')
+        } catch (error) {
+            console.error(error.message)
+            alert('Failed to add product to cart!'+error.message)
+        }
+        // console.log("Add to cart"+ productId);
+    }
+
+
     return (
         <div className="product mt-24">
             <div className="container container-lg">
@@ -20,12 +72,13 @@ const ProductListOne = () => {
                     {products.map((product) => {
                        return <div key={product._id} className="col-xxl-2 col-lg-3 col-sm-4 col-6">
                        <div className="product-card px-8 py-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                           <Link
+                           <button
                                to="/cart"
+                               onClick={() => handleAddToCart(product._id)}
                                className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 position-absolute inset-block-start-0 inset-inline-end-0 me-16 mt-16"
                            >
                                Add <i className="ph ph-shopping-cart" />
-                           </Link>
+                           </button>
                            <Link
                                to={`/product-details/${product._id}`}
                                className="product-card__thumb flex-center"
