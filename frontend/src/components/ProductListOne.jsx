@@ -6,27 +6,6 @@ import {jwtDecode} from "jwt-decode";
 const ProductListOne = () => {
     const [products, setProducts] = useState([]);
     const [isInCart, setIsInCart] = useState(false);
-   useEffect(() => {
-        const fetchData = async () => {
-            const productList = await axios.get('http://localhost:5000/products/getProducts')
-            console.log(productList)
-            setProducts(productList.data)
-        };
-        fetchData();
-
-        const cartItems =()=>{
-            const userId = getDecodedToken();
-            console.log(userId);
-            if (!userId) return null;
-            return axios.get(`http://localhost:5000/cart/getCart?userId=${userId.id}`)
-            .then(response=>{
-                setIsInCart(response.data.some(item=>item.itemId===item))
-                console.log("cart"+response.data.some(item=>item.itemId===item))
-            })
-            .catch(error=>console.error(error))   
-        }
-        cartItems();
-    }, []);
 
     const getDecodedToken = () => {
         const token = localStorage.getItem("token");
@@ -38,6 +17,28 @@ const ProductListOne = () => {
           return null;
         }
       };
+   useEffect(() => {
+        const fetchData = async () => {
+            const productList = await axios.get('http://localhost:5000/products/getProducts')
+            setProducts(productList.data)
+        };
+        fetchData();
+
+        const cartItems = async ()=>{
+            const userId = getDecodedToken();
+            console.log(userId.id);
+            if (!userId) return null;
+            return await axios.get(`http://localhost:5000/cart/getCart/${userId.id}`)
+            .then(response=>{
+                setIsInCart(response.data.some(item=>item.itemId===item))
+                console.log("cart"+response.data.some(item=>item.itemId===item))
+            })
+            .catch(error=>console.error(error))   
+        }
+        cartItems();
+    }, []);
+
+
       
     const handleAddToCart = async (productId) => {
         try {

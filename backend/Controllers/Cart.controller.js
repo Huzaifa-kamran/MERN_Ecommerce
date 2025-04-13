@@ -1,4 +1,4 @@
-const cart = require('../Models/Cart.model');
+const Cart = require('../models/Cart.model'); // Capital C
 const product = require('../Models/Products.model');
 const User = require('../Models/Users.model'); // Ensure this path is correct
 
@@ -7,9 +7,9 @@ const User = require('../Models/Users.model'); // Ensure this path is correct
 const addToCart = async (req, res) => {
     try {
         const { item, quantity,userId } = req.body;
-        const checkCart = await cart.findOne({ userId: userId });
+        const checkCart = await Cart.findOne({ userId: userId });
         if (!checkCart) {
-            const newCart = await cart.create({ items: [{ item, quantity }], userId: userId });
+            const newCart = await Cart.create({ items: [{ item, quantity }], userId: userId });
             return res.status(201).json({ message: 'Product added to cart successfully.', cart: newCart });
         }
         const checkItem = checkCart.items.find((i) => i.item.toString() === item);
@@ -33,7 +33,8 @@ const getCart = async (req, res) => {
     try {
         const userId = req.params.userId;
         console.log("userId"+userId);
-        const checkCart = await cart.findOne({ userId: userId }).populate('items.item');
+        const checkCart = await Cart.findOne({userId: userId}).populate('items.item');
+        console.log("checkCart"+checkCart);
         if (!checkCart) {
             return res.status(404).json({ message: 'Cart is empty.' });
         }
@@ -48,7 +49,7 @@ const getCart = async (req, res) => {
 const updateCart = async (req, res) => {
     try {
         const { userId, items } = req.body;
-        const checkCart = await cart.findOne({ userId: userId });
+        const checkCart = await Cart.findOne({ userId: userId });
         if (!checkCart) {
             return res.status(404).json({ message: 'Cart is empty.' });
         }
@@ -66,7 +67,7 @@ const updateCart = async (req, res) => {
 const removeFromCart = async (req, res) => {
     try {
         const { userId, itemId } = req.body;
-        const checkCart = await cart.findOne({ userId: userId });
+        const checkCart = await Cart.findOne({ userId: userId });
         if (!checkCart) {
             return res.status(404).json({ message: 'Cart is empty.' });
         }
