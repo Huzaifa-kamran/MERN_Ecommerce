@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {jwtDecode} from "jwt-decode";
+import { ToastContainer, toast } from "react-toastify";
 
 const ProductListOne = () => {
     const [products, setProducts] = useState([]);
@@ -17,6 +18,9 @@ const ProductListOne = () => {
           return null;
         }
       };
+         const handleToast = (message, toastType) => {
+                toastType === "danger" ? toast.error(message) : toast.success(message);
+              };
    useEffect(() => {
         const fetchData = async () => {
             const productList = await axios.get('http://localhost:5000/products/getProducts')
@@ -24,17 +28,20 @@ const ProductListOne = () => {
         };
         fetchData();
 
-        const cartItems = async ()=>{
+        const cartItems = async () => {
             const userId = getDecodedToken();
-            console.log(userId.id);
-            if (!userId) return null;
-            return await axios.get(`http://localhost:5000/cart/getCart/${userId.id}`)
-            .then(response=>{
-                setIsInCart(response.data.some(item=>item.itemId===item))
-                console.log("cart"+response.data.some(item=>item.itemId===item))
-            })
-            .catch(error=>console.error(error))   
-        }
+            if (!userId) return;
+        
+            try {
+                const response = await axios.get(`http://localhost:5000/cart/getCart/${userId.id}`);
+                
+                // Extract productIds from the response
+                setIsInCart(response.data.items.map(item => item.item._id));
+            } catch (error) {
+                console.error("Failed to fetch cart:", error);
+            }
+        };
+        
         cartItems();
     }, []);
 
@@ -44,22 +51,16 @@ const ProductListOne = () => {
         try {
             // Assuming you have a userId in your application
             const userId = getDecodedToken();
-            console.log(
-                "Adding product to cart for user: ", userId.id, " with product id: ", productId, "..."
-            )
             if (!userId) {
                 alert('Please login to add products to cart!')
                 return
             }
-            // Send a request to add the product to the cart
-            // You might need to send the userId as well
-            await axios.post('http://localhost:5000/cart/addToCart', 
+          const response =  await axios.post('http://localhost:5000/cart/addToCart', 
                 {item:productId, quantity: 1, userId: userId.id},
             )
-            alert('Product added to cart!')
+            handleToast(response.data.message, "success");
         } catch (error) {
-            console.error(error.message)
-            alert('Failed to add product to cart!'+error.message)
+            handleToast(error.message, "danger");
         }
         // console.log("Add to cart"+ productId);
     }
@@ -78,7 +79,11 @@ const ProductListOne = () => {
                                onClick={() => handleAddToCart(product._id)}
                                className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 position-absolute inset-block-start-0 inset-inline-end-0 me-16 mt-16"
                            >
-                               Add <i className="ph ph-shopping-cart" />
+                               {isInCart.includes(product._id) ? (<>Added <i className="ph ph-check" /></>) 
+                               :(<>Add <i className="ph ph-shopping-cart" /></>)}
+
+
+                          
                            </button>
                            <Link
                                to={`/product-details/${product._id}`}
@@ -140,6 +145,7 @@ const ProductListOne = () => {
                     
                 </div>
             </div>
+            <ToastContainer/>
         </div>
 
     )

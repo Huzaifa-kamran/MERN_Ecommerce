@@ -1,4 +1,4 @@
-const Cart = require('../models/Cart.model'); // Capital C
+const Cart = require('../models/Cart.model'); 
 const product = require('../Models/Products.model');
 const User = require('../Models/Users.model'); // Ensure this path is correct
 
@@ -16,7 +16,7 @@ const addToCart = async (req, res) => {
         if (checkItem) {
             checkItem.quantity += quantity;
             await checkCart.save();
-            return res.status(200).json({ message: 'Product quantity updated successfully.', cart: checkCart });
+            return res.status(200).json({ message: 'Product is already added in cart', cart: checkCart });
         }
         checkCart.items.push({ item, quantity });
         await checkCart.save();
@@ -26,6 +26,21 @@ const addToCart = async (req, res) => {
     }
 };
 
+// @Method   POST
+// @API      http://localhost:5000/cart/cartQuantity
+const cartQuantity = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const checkCart = await Cart.findOne({ userId: userId });
+        if (!checkCart) {
+            return res.status(404).json({ message: 'Cart is empty.' });
+        }
+        const totalQuantity = checkCart.items.reduce((acc, item) => acc + item.quantity, 0);
+        res.status(200).json({ totalQuantity });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch cart quantity.', error: error.message });
+    }
+};
 // @Method   GET
 // @API      http://localhost:5000/cart/getCart/:userId
 const getCart = async (req, res) => {
@@ -34,7 +49,7 @@ const getCart = async (req, res) => {
         const userId = req.params.userId;
         console.log("userId"+userId);
         const checkCart = await Cart.findOne({userId: userId}).populate('items.item');
-        console.log("checkCart"+checkCart);
+        console.log("Cart Items : " + checkCart);
         if (!checkCart) {
             return res.status(404).json({ message: 'Cart is empty.' });
         }
