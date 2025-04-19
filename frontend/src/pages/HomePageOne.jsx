@@ -5,7 +5,7 @@ import BannerOne from "../components/BannerOne";
 import FeatureOne from "../components/FeatureOne";
 import PromotionalOne from "../components/PromotionalOne";
 import FlashSalesOne from "../components/FlashSalesOne";
-import ProductListOne from "../components/ProductListOne";
+import ProductList from "../components/ProductList";
 import OfferOne from "../components/OfferOne";
 import RecommendedOne from "../components/RecommendedOne";
 import HotDealsOne from "../components/HotDealsOne";
@@ -53,7 +53,7 @@ const HomePageOne = () => {
       <FlashSalesOne />
 
       {/* ProductListOne */}
-      <ProductListOne />
+      <ProductList />
 
       {/* OfferOne */}
       <OfferOne />

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {jwtDecode} from "jwt-decode";
+import { handleAddToCart } from '../helper/cartHelper';
 import { ToastContainer, toast } from "react-toastify";
 
-const ProductListOne = () => {
+const ProductList = () => {
     const [products, setProducts] = useState([]);
-    const [isInCart, setIsInCart] = useState(false);
+    const [isInCart, setIsInCart] = useState([]);
 
     const getDecodedToken = () => {
         const token = localStorage.getItem("token");
@@ -47,23 +48,37 @@ const ProductListOne = () => {
 
 
       
-    const handleAddToCart = async (productId) => {
-        try {
-            // Assuming you have a userId in your application
-            const userId = getDecodedToken();
-            if (!userId) {
-                alert('Please login to add products to cart!')
-                return
-            }
-          const response =  await axios.post('http://localhost:5000/cart/addToCart', 
-                {item:productId, quantity: 1, userId: userId.id},
-            )
-            handleToast(response.data.message, "success");
-        } catch (error) {
-            handleToast(error.message, "danger");
-        }
-        // console.log("Add to cart"+ productId);
-    }
+    //     if (isInCart.includes(productId)) {
+    //         handleToast("Product already in cart", "danger");
+    //         return;
+    //     }
+    
+    //     try {
+    //         const userId = getDecodedToken();
+    //         if (!userId) {
+    //             alert('Please login to add products to cart!');
+    //             return;
+    //         }
+    
+    //         const response = await axios.post('http://localhost:5000/cart/addToCart', {
+    //             item: productId,
+    //             quantity: 1,
+    //             userId: userId.id
+    //         });
+    
+    //         handleToast(response.data.message, "success");
+    //         setIsInCart(prev => [...prev, productId]);
+    
+    //     } catch (error) {
+    //         handleToast(error.message, "danger");
+    //     }
+    // };
+    
+    // Inside your component
+const onAdd = (productId) => {
+    handleAddToCart(productId, isInCart, setIsInCart, toast);
+};
+    
 
 
     return (
@@ -76,8 +91,12 @@ const ProductListOne = () => {
                        <div className="product-card px-8 py-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                            <button
                                to="/cart"
-                               onClick={() => handleAddToCart(product._id)}
-                               className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 position-absolute inset-block-start-0 inset-inline-end-0 me-16 mt-16"
+                               onClick={() =>  onAdd(product._id)}
+                               className={`product-card__cart btn ${isInCart.includes(product._id) 
+                                ? 'bg-success text-white' 
+                                : 'bg-main-50 text-main-600 hover-bg-main-600 hover-text-white'} 
+                                py-11 px-24 rounded-pill flex-align gap-8 position-absolute inset-block-start-0 inset-inline-end-0 me-16 mt-16`}
+                            
                            >
                                {isInCart.includes(product._id) ? (<>Added <i className="ph ph-check" /></>) 
                                :(<>Add <i className="ph ph-shopping-cart" /></>)}
@@ -105,7 +124,7 @@ const ProductListOne = () => {
                                    <span className="text-xs fw-bold text-gray-600">(17k)</span>
                                </div>
                                <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                                   <Link to="/product-details" className="link text-line-2">
+                               <Link to={`/product-details/${product._id}`} className="link text-line-2">
                                        {product.proName}
                                    </Link>
                                </h6>
@@ -151,4 +170,4 @@ const ProductListOne = () => {
     )
 }
 
-export default ProductListOne
+export default ProductList

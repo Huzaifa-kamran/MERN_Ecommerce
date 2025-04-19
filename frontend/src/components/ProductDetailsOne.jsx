@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import { getCountdown } from '../helper/Countdown';
+import { handleAddToCart } from '../helper/cartHelper';
+import { ToastContainer, toast } from "react-toastify";
 import axios from 'axios';
 
 const ProductDetailsOne = () => {
     const [timeLeft, setTimeLeft] = useState(getCountdown());
+    const [isInCart, setIsInCart] = useState([]);
 
     const {id} = useParams();
     
@@ -35,6 +38,11 @@ const ProductDetailsOne = () => {
     const [quantity, setQuantity] = useState(1);
     const incrementQuantity = () => setQuantity(quantity + 1);
     const decrementQuantity = () => setQuantity(quantity > 1 ? quantity - 1 : quantity);
+
+const onAdd = (productId) => {
+    handleAddToCart(productId, isInCart, setIsInCart, toast);
+};
+    
 
     return (
         <section className="product-details py-80">
@@ -323,7 +331,8 @@ const ProductDetailsOne = () => {
                         </div>
                     </div>
                 </div>
-                <div className="pt-80">
+              {/* Here is the next section of the code */}
+              <div className="pt-80">
                     <div className="product-dContent border rounded-24">
                         <div className="product-dContent__header border-bottom border-gray-100 flex-between flex-wrap gap-16">
                             <ul

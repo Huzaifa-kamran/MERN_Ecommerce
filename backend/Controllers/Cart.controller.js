@@ -51,7 +51,7 @@ const getCart = async (req, res) => {
         const checkCart = await Cart.findOne({userId: userId}).populate('items.item');
         console.log("Cart Items : " + checkCart);
         if (!checkCart) {
-            return res.status(404).json({ message: 'Cart is empty.' });
+            return res.status(200).json({ message: 'Cart is empty.' });
         }
         res.status(200).json(checkCart);
     } catch (error) {

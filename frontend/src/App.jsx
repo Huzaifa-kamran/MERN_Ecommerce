@@ -4,8 +4,7 @@ import HomePageOne from "./pages/HomePageOne";
 import PhosphorIconInit from "./helper/PhosphorIconInit";
 import HomePageTwo from "./pages/HomePageTwo";
 import ShopPage from "./pages/ShopPage";
-import ProductDetailsPageOne from "./pages/ProductDetailsPageOne";
-import ProductDetailsPageTwo from "./pages/ProductDetailsPageTwo";
+import ProductDetailsPageOne from "./pages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import AccountPage from "./pages/AccountPage";
@@ -25,7 +24,6 @@ function App() {
         <Route exact path="/index-two" element={<HomePageTwo />} />
         <Route exact path="/shop" element={<ShopPage />} />
         <Route exact path="/product-details/:id" element={<ProductDetailsPageOne />} />
-        <Route exact path="/product-details-two" element={<ProductDetailsPageTwo />} />
         <Route exact path="/cart" element={<CartPage />} />
         <Route exact path="/checkout" element={<CheckoutPage />} />
         <Route exact path="/account" element={<AccountPage />} />
