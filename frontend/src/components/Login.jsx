@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useUser } from '../context/UserContext';
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-const Account = () => {
+const Login = () => {
+    const { setUser } = useUser();
     const [formData, setFormData] = useState({
         usernNme: '',
         userPassword: '',
@@ -33,8 +35,16 @@ const Account = () => {
             } else {
                 handleToast(response.data.message, "success");
                 localStorage.setItem("token", response.data.token);
+                console.log(response.data.user);
+                const userData = {
+                    userName: response.data.user.userName,
+                    userEmail: response.data.user.userEmail,
+                    userRole: response.data.user.userRole,
+                    userImage: response.data.user.userImage,
+                }
+                setUser(userData);
                 setFormData({ userEmail: "", userPassword: "" });
-                setTimeout(() => navigate("/"), 2000);
+                // setTimeout(() => navigate("/"), 2000);
             }
         } catch (error) {
             handleToast(error.response?.data?.error || "Something went wrong!", "danger");
@@ -134,4 +144,4 @@ const Account = () => {
     )
 }
 
-export default Account
+export default Login

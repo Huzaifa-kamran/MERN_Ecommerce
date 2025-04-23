@@ -67,13 +67,14 @@ const login = async (req, res) => {
         const validPassword = await bcrypt.compare(userPassword, user.userPassword);
 
         if (!validPassword) {
-            return res.status(404).send({ "error": "Invalid credentials" });
+            return res.status(404).send({ error: "Email or password is incorrect" });
         }
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1hr' });
 
         return res.status(200).send({
             message: "Login Successful",
+            user:user,
             token: token,
         });
     } catch (error) {
