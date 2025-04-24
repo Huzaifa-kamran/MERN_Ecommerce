@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Preloader from "../helper/Preloader";
 
 import HeaderTwo from "../components/HeaderTwo";
@@ -10,10 +10,23 @@ import ScrollToTop from "react-scroll-to-top";
 import ColorInit from "../helper/ColorInit";
 import Login from "../components/Login";
 
-
+import { useUser } from '../context/UserContext';
+import { useNavigate } from "react-router-dom";
 const AccountPage = () => {
+  const navigate = useNavigate();
 
+  const { user } = useUser();
 
+  useEffect(() => {
+    if(user.userEmail){
+      
+      navigate('/');
+    }
+  
+
+  }, [user])
+  
+  
 
   return (
     <>

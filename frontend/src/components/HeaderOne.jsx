@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import query from 'jquery';
 import { Link, NavLink } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 const HeaderOne = () => {
+    const { user } = useUser();
     const [scroll, setScroll] = useState(false)
     useEffect(() => {
         window.onscroll = () => {
@@ -563,10 +565,11 @@ const HeaderOne = () => {
                                 >
                                     <span className="icon text-md d-flex">
                                         {" "}
-                                        <i className="ph ph-user-circle" />{" "}
+                                        {user.userImage ? <img src={user.userImage} alt="" className="w-16 h-16 rounded-circle" /> : <i className="ph ph-user-circle" />}
+                                        {" "}
                                     </span>
                                     <span className="hover-text-decoration-underline">
-                                        My Account
+                                       {user.userName? user.userName : "Login"}
                                     </span>
                                 </Link>
                             </li>

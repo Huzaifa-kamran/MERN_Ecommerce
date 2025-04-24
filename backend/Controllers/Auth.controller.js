@@ -87,7 +87,7 @@ const login = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await userModel.findById(id);
+        const user = await userModel.findById(id).select('-userPassword');
         return user ? res.json(user) : res.status(404).json({ error: 'User not found' });
     } catch (error) {
         return res.status(404).json({ error: error.message });
